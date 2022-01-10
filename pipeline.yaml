@@ -1,0 +1,69 @@
+name: Shafali_testing1
+trigger: none
+ 
+parameters:
+- name: AppName
+  displayName: Application Name
+  default: Shafali_testing1
+  type: string
+- name: AppEnv
+  displayName: Application Environment
+  type: string
+  values:
+  - ut
+  - st
+  - pp
+  - pr
+- name: AppLoc
+  displayName: Application Location
+  type: string
+  default: eastus2
+  values:
+  - eastus2
+- name: RunApply
+  displayName: "Run Terraform Apply"
+  type: boolean
+  default: true
+- name: RunDestroy
+  displayName: "Run Terraform Destroy (Plan Only!)"
+  type: boolean
+  default: false
+ 
+variables:
+- name: destroy
+  value: ${{parameters.RunDestroy}}
+- name: TF_VAR_APP_NAME
+  value: ${{parameters.AppName}}
+- name: TF_VAR_APP_ENV
+  value: ${{parameters.AppEnv}}
+- name: TF_VAR_APP_LOCATION
+  value: ${{parameters.AppLoc}}
+- name: tfenv
+  value: "applz-testing"
+- name: vars
+  value: "Barings-ModuleTesting.tfvars"
+- name: plan
+  value: "Barings-ModuleTesting.tfplan"
+ 
+pool:
+  vmImage: ubuntu-latest
+ 
+jobs:
+- job: Create
+  displayName: 'Setup Azure Application Environment'
+  timeoutInMinutes: 720
+  steps:
+  - script: |
+      set +e
+      REPO="https://${PAT}@dev.azure.com/anishgehlot0925/anishgehlot"
+      git clone -b dev ${REPO}/_git/modules
+      ls -la
+    displayName: 'Checkout Barings Terraform Modules and CommonConfig'
+    env:
+      PAT: $(pat)
+
+  - script: |
+      az login --service-principal --username "$(ARM_CLIENT_ID)" --password "$(ARM_CLIENT_SECRET)" --tenant "$(ARM_TENANT_ID)"
+      az account set -s "$(ARM_SUBSCRIPTION_ID)"
+      terraform init
+      terraform plan
