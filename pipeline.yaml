@@ -61,9 +61,31 @@ jobs:
     displayName: 'Checkout Barings Terraform Modules and CommonConfig'
     env:
       PAT: $(pat)
+      
+      
+    - script: |
+      set +e
+      REPOAKS="https://${PAT}@dev.azure.com/barings/Barings%20Standard%20IaC"
+      git clone -b shafali ${REPOAKS}/_git/AKS
+      chmod +x ./AKS/get_modules.ps1
+      ./AKS/get_modules.ps1 -pat ${PAT}
+      ls -1d *
+    displayName: 'Checkout Barings Terraform Modules and AKS Module'
+    env:
+      PAT: $(pat)
+
 
   - script: |
       az login --service-principal --username "$(ARM_CLIENT_ID)" --password "$(ARM_CLIENT_SECRET)" --tenant "$(ARM_TENANT_ID)"
       az account set -s "$(ARM_SUBSCRIPTION_ID)"
       terraform init
       terraform plan
+      
+      
+      
+      
+          env: 
+      ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+      ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+      ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+      ARM_TENANT_ID: $(ARM_TENANT_ID)
