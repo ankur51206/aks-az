@@ -29,22 +29,7 @@ parameters:
   type: boolean
   default: false
  
-variables:
-- name: destroy
-  value: ${{parameters.RunDestroy}}
-- name: TF_VAR_APP_NAME
-  value: ${{parameters.AppName}}
-- name: TF_VAR_APP_ENV
-  value: ${{parameters.AppEnv}}
-- name: TF_VAR_APP_LOCATION
-  value: ${{parameters.AppLoc}}
-- name: tfenv
-  value: "applz-testing"
-- name: vars
-  value: "Barings-ModuleTesting.tfvars"
-- name: plan
-  value: "Barings-ModuleTesting.tfplan"
- 
+
 pool:
   vmImage: ubuntu-latest
  
@@ -57,14 +42,12 @@ jobs:
   - script: |
       set +e
       REPO="https://${PAT}@dev.azure.com/barings/Barings%20Standard%20IaC"
-      git clone -b shafali ${REPO}/_git/AKS
-      chmod +x ./AKS/get_modules.ps1
-      ./AKS/get_modules.ps1 -pat ${PAT}
+      chmod +x ./CommonConfig/get_modules.ps1
+      ./CommonConfig/get_modules.ps1 -pat ${PAT}
       ls -1d *
-    displayName: 'Checkout Barings Terraform Modules and AKS Module'
+    displayName: 'Checkout Barings Terraform Modules and CommonConfig'
     env:
       PAT: $(pat)
-
 
   - script: |
       az login --service-principal --username "$(ARM_CLIENT_ID)" --password "$(ARM_CLIENT_SECRET)" --tenant "$(ARM_TENANT_ID)"
