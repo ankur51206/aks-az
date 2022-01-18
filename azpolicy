@@ -1,0 +1,30 @@
+The service that allows you to monitor virtual machines has been made available in Azure Monitor, called Azure Monitor for VMs. This service allows you to analyze system performance data and makes a map that identifies all dependencies of virtual machines and their processes.
+
+The Initiatives, which are a set of multiple Azure Policy, can be assigned at the Resource Group level, Subscription or Management Group
+
+
+In this regard, the policies for enabling Azure Monitor for VMs are grouped into a single "initiative", "Enable Azure Monitor for VMs" under this parent policy, that includes the following policies:
+
+----
+ENTER ALL POLICIES NAME THOSE ARE ENABLED.
+----
+
+Currently we have enabled this policy and we got the msg of below..
+
+---
+ENTER THE COMPLIENCE NAME THAT MSG WE ARE GETTING..
+---
+
+So, in order to enable vm monitor dependency agent, we need to put command 
+
+
+az vm extension set \
+    --resource-group myResourceGroup \
+    --vm-name myVM \
+    --name DependencyAgentLinux \
+    --publisher Microsoft.Azure.Monitoring.DependencyAgent \
+    --version 9.5
+
+
+ref: https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/agent-dependency-linux
+
